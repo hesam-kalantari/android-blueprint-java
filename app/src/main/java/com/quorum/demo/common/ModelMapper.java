@@ -1,7 +1,7 @@
 package com.quorum.demo.common;
 
-public interface ModelMapper<Model, DomainModel>
+public interface ModelMapper<M, D>
 {
-    DomainModel mapFromModel(final Model model);
-    Model mapToModel(final DomainModel domainModel);
+    D mapFromModel(final M model);
+    M mapToModel(final D domainModel);
 }

@@ -6,8 +6,9 @@ import com.quorum.demo.db.blog.BlogDao;
 import com.quorum.demo.db.blog.BlogEntity;
 import com.quorum.demo.db.blog.BlogEntityMapper;
 import com.quorum.demo.model.Blog;
+import com.quorum.demo.network.ApiResponseCallback;
 import com.quorum.demo.network.api.BlogResponseData;
-import com.quorum.demo.network.api.BlogResponseMapper;
+import com.quorum.demo.network.api.BlogResponseDtoMapper;
 import com.quorum.demo.network.api.BlogService;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,19 +26,19 @@ public class BlogRepository
     private final BlogDao blogDao;
     private final BlogService blogService;
     private final BlogEntityMapper blogEntityMapper;
-    private final BlogResponseMapper blogResponseMapper;
+    private final BlogResponseDtoMapper blogResponseDtoMapper;
     private final Executor diskIO;
     private final Executor mainThread;
 
     @Inject
     public BlogRepository(final BlogDao blogDao, final BlogService blogService, final BlogEntityMapper blogEntityMapper,
-           final BlogResponseMapper blogResponseMapper, final @Named("diskIO") Executor diskIO,
-           final @Named("mainThread") Executor mainThread)
+                          final BlogResponseDtoMapper blogResponseDtoMapper, final @Named("diskIO") Executor diskIO,
+                          final @Named("mainThread") Executor mainThread)
     {
         this.blogDao = blogDao;
         this.blogService = blogService;
         this.blogEntityMapper = blogEntityMapper;
-        this.blogResponseMapper = blogResponseMapper;
+        this.blogResponseDtoMapper = blogResponseDtoMapper;
         this.diskIO = diskIO;
         this.mainThread = mainThread;
     }
@@ -60,19 +61,20 @@ public class BlogRepository
 
     //TODO: temporary, repository should be transparently called
     private void getAllBlogs(final Result<List<Blog>> callback) {
-        this.blogService.getBlogs().enqueue(new Callback<List<BlogResponseData>>()
-        {
-            @Override
-            public void onResponse(final @NonNull Call<List<BlogResponseData>> call, final @NonNull Response<List<BlogResponseData>> response)
-            {
-                callback.success(blogResponseMapper.mapFromModelList(Objects.requireNonNull(response.body())));
-            }
-
-            @Override
-            public void onFailure(final @NonNull Call<List<BlogResponseData>> call, final @NonNull Throwable t)
-            {
-                callback.failed(t.getMessage());
-            }
-        });
+        this.blogService.getBlogs().enqueue(new ApiResponseCallback<>(callback, new BlogResponseDtoMapper()));
+//        this.blogService.getBlogs().enqueue(new Callback<List<BlogResponseData>>()
+//        {
+//            @Override
+//            public void onResponse(final @NonNull Call<List<BlogResponseData>> call, final @NonNull Response<List<BlogResponseData>> response)
+//            {
+//                callback.success(blogResponseDtoMapper.mapFromModelList(Objects.requireNonNull(response.body())));
+//            }
+//
+//            @Override
+//            public void onFailure(final @NonNull Call<List<BlogResponseData>> call, final @NonNull Throwable t)
+//            {
+//                callback.failed(t.getMessage());
+//            }
+//        });
     }
 }

@@ -9,5 +9,5 @@ public interface BlogService
 {
 
     @GET("blogs")
-    Call<List<BlogResponseData>> getBlogs();
+    Call<BlogResponseData> getBlogs();
 }
