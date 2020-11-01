@@ -1,0 +1,38 @@
+apply plugin: "com.diffplug.gradle.spotless"
+
+//https://github.com/diffplug/spotless/tree/master/plugin-gradle#applying-to-java-source
+//https://github.com/diffplug/spotless/issues/134
+//https://github.com/google/styleguide/blob/gh-pages/eclipse-java-google-style.xml
+spotless {
+    java {
+        target '**/*.java'
+//        importOrder() // standard import order
+        importOrderFile 'formatter/spotless.importorder.txt'
+        eclipse().configFile('formatter/spotless.eclipseformatter.xml')
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        indentWithSpaces()
+        endWithNewline()
+//        licenseHeaderFile 'formatter/spotless.license.txt'
+    }
+    kotlin {
+        target '**/*.kt'
+        ktlint()
+        trimTrailingWhitespace()
+        indentWithSpaces()
+        endWithNewline()
+    }
+    format 'misc', {
+        target '**/*.gradle', '**/*.md', '**/.gitignore'
+        indentWithSpaces()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    format 'xml', {
+        target '**/*.xml'
+        indentWithSpaces()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}

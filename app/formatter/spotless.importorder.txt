@@ -1,0 +1,8 @@
+7=ir.co.isc.msa
+6=org
+5=com
+4=com.google
+3=androidx
+2=android
+1=javax
+0=java
